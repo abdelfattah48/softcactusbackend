@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Auth routes (public)
+// ─── Public routes (no auth required) ────────────────────────────────────────
+
+// Auth
 Route::prefix('auth')->group(function () {
     Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
     Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink']);
@@ -10,25 +12,44 @@ Route::prefix('auth')->group(function () {
     Route::get('/verify-reset-token', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'verify']);
 });
 
-// Protected routes
+// Projects — public read
+Route::get('/projects',      [\App\Http\Controllers\Api\ProjectController::class, 'index']);
+Route::get('/projects/{id}', [\App\Http\Controllers\Api\ProjectController::class, 'show']);
+
+// Categories — public read
+Route::get('/categories',      [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+Route::get('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::class, 'show']);
+
+// Why Us — public read
+Route::get('/why-us',       [\App\Http\Controllers\Api\WhyUsController::class, 'index']);
+Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, 'icons']);
+
+// ─── Protected routes (auth:sanctum required) ─────────────────────────────────
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [\App\Http\Controllers\Auth\LoginController::class, 'currentUser']);
     Route::post('/auth/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 
     // User statistics and recent users (must be before apiResource to avoid {id} conflict)
-    Route::get('/users/stats', [\App\Http\Controllers\Api\UserController::class, 'stats']);
+    Route::get('/users/stats',  [\App\Http\Controllers\Api\UserController::class, 'stats']);
     Route::get('/users/recent', [\App\Http\Controllers\Api\UserController::class, 'recent']);
 
     // Users CRUD
     Route::apiResource('users', \App\Http\Controllers\Api\UserController::class);
 
-    // Projects CRUD
+    // Projects CRUD (write operations only — reads are handled by public routes above)
     Route::post('/projects/upload-media', [\App\Http\Controllers\Api\ProjectController::class, 'uploadMedia']);
-    Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class);
+    Route::post('/projects',              [\App\Http\Controllers\Api\ProjectController::class, 'store']);
+    Route::put('/projects/{id}',          [\App\Http\Controllers\Api\ProjectController::class, 'update']);
+    Route::patch('/projects/{id}',        [\App\Http\Controllers\Api\ProjectController::class, 'update']);
+    Route::delete('/projects/{id}',       [\App\Http\Controllers\Api\ProjectController::class, 'destroy']);
 
-    // Categories CRUD
-    Route::apiResource('categories', \App\Http\Controllers\Api\CategoryController::class);
-    Route::post('/categories/reorder', [\App\Http\Controllers\Api\CategoryController::class, 'reorder']);
+    // Categories CRUD (write operations only — reads are handled by public routes above)
+    Route::post('/categories',            [\App\Http\Controllers\Api\CategoryController::class, 'store']);
+    Route::put('/categories/{id}',        [\App\Http\Controllers\Api\CategoryController::class, 'update']);
+    Route::patch('/categories/{id}',      [\App\Http\Controllers\Api\CategoryController::class, 'update']);
+    Route::delete('/categories/{id}',     [\App\Http\Controllers\Api\CategoryController::class, 'destroy']);
+    Route::post('/categories/reorder',    [\App\Http\Controllers\Api\CategoryController::class, 'reorder']);
 
     // Why Us — settings
     Route::patch('/why-us/settings', [\App\Http\Controllers\Api\WhyUsController::class, 'updateSettings']);
@@ -44,15 +65,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/why-us/cards/{id}',    [\App\Http\Controllers\Api\WhyUsController::class, 'updateCard']);
     Route::delete('/why-us/cards/{id}', [\App\Http\Controllers\Api\WhyUsController::class, 'destroyCard']);
 });
-
-// Why Us — public read (no auth required)
-Route::get('/why-us',       [\App\Http\Controllers\Api\WhyUsController::class, 'index']);
-Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, 'icons']);
-
-// Categories — public read (no auth required)
-Route::get('/categories',       [\App\Http\Controllers\Api\CategoryController::class, 'index']);
-Route::get('/categories/{id}',  [\App\Http\Controllers\Api\CategoryController::class, 'show']);
-
-// Projects — public read (no auth required)
-Route::get('/projects',     [\App\Http\Controllers\Api\ProjectController::class, 'index']);
-Route::get('/projects/{id}',[\App\Http\Controllers\Api\ProjectController::class, 'show']);
