@@ -6,63 +6,95 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     /**
-     * Login user
+     * Login user — with rate limiting, status check, and minimal response.
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
+        $request->validate([
+            'email'    => 'required|email|max:255',
+            'password' => 'required|string|min:8|max:128',
         ]);
 
-        if ($validator->fails()) {
+        // Rate limit: 5 attempts per minute per IP+email combo
+        $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+                'message' => "Too many login attempts. Please try again in {$seconds} seconds.",
+            ], 429);
         }
 
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($throttleKey, 60); // decay 60 seconds
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid email or password',
             ], 401);
         }
 
-        // Generate API token
+        // Check account is active
+        if (isset($user->status) && $user->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your account has been disabled. Contact an administrator.',
+            ], 403);
+        }
+
+        // Clear rate limiter on success
+        RateLimiter::clear($throttleKey);
+
+        // Revoke previous tokens for this device (optional: remove if multi-device needed)
+        $user->tokens()->where('name', 'backoffice')->delete();
+
+        // Generate new token
         $token = $user->createToken('backoffice')->plainTextToken;
 
+        // Return only safe user fields — never expose the full model
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
             'data' => [
-                'user' => $user->toArray(),
+                'user' => [
+                    'id'    => $user->id,
+                    'name'  => $user->name,
+                    'email' => $user->email,
+                    'role'  => $user->role,
+                ],
                 'token' => $token,
             ],
         ]);
     }
 
     /**
-     * Get current user
+     * Get current user — safe fields only.
      */
     public function currentUser(Request $request)
     {
+        $user = $request->user();
         return response()->json([
             'success' => true,
-            'data' => $request->user(),
+            'data' => [
+                'id'    => $user->id,
+                'name'  => $user->name,
+                'email' => $user->email,
+                'role'  => $user->role,
+            ],
         ]);
     }
 
     /**
-     * Logout user
+     * Logout user — revoke current token only.
      */
     public function logout(Request $request)
     {

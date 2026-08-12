@@ -8,18 +8,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsAuthenticated
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || !$request->user()->hasAccess()) {
+        $user = $request->user();
+
+        if (!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
             ], 401);
+        }
+
+        // Block disabled accounts even if they have a valid token
+        if (isset($user->status) && $user->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Account disabled',
+            ], 403);
         }
 
         return $next($request);

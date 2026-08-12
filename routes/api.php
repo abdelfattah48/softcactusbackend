@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 // Auth
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle:5,1');
     Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink']);
     Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset']);
     Route::get('/verify-reset-token', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'verify']);
