@@ -26,6 +26,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/projects/upload-media', [\App\Http\Controllers\Api\ProjectController::class, 'uploadMedia']);
     Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class);
 
+    // Categories CRUD
+    Route::apiResource('categories', \App\Http\Controllers\Api\CategoryController::class);
+    Route::post('/categories/reorder', [\App\Http\Controllers\Api\CategoryController::class, 'reorder']);
+
     // Why Us — settings
     Route::patch('/why-us/settings', [\App\Http\Controllers\Api\WhyUsController::class, 'updateSettings']);
 
@@ -44,6 +48,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 // Why Us — public read (no auth required)
 Route::get('/why-us',       [\App\Http\Controllers\Api\WhyUsController::class, 'index']);
 Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, 'icons']);
+
+// Categories — public read (no auth required)
+Route::get('/categories',       [\App\Http\Controllers\Api\CategoryController::class, 'index']);
+Route::get('/categories/{id}',  [\App\Http\Controllers\Api\CategoryController::class, 'show']);
 
 // Projects — public read (no auth required)
 Route::get('/projects',     [\App\Http\Controllers\Api\ProjectController::class, 'index']);
