@@ -10,11 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Public (unauthenticated) requests: only return published projects that have a public card
+        // Admin (authenticated) requests: return all projects
+        $query = Project::orderBy('created_at', 'desc');
+
+        if (!auth()->check()) {
+            $query->where('status', 'published')
+                  ->whereNotNull('public_card');
+        }
+
         return response()->json([
             'success' => true,
-            'data' => Project::orderBy('created_at', 'desc')->get()
+            'data' => $query->get()
         ]);
     }
 
