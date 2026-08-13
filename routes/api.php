@@ -30,6 +30,9 @@ Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, '
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [\App\Http\Controllers\Auth\LoginController::class, 'currentUser']);
+    Route::get('/profile',                [\App\Http\Controllers\Api\ProfileController::class, 'show']);
+    Route::put('/profile',                [\App\Http\Controllers\Api\ProfileController::class, 'update']);
+    Route::post('/profile/change-password', [\App\Http\Controllers\Api\ProfileController::class, 'changePassword']);
     Route::post('/auth/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 
     // User statistics and recent users (must be before apiResource to avoid {id} conflict)
