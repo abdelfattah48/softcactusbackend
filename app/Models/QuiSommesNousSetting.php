@@ -10,6 +10,7 @@ class QuiSommesNousSetting extends Model
         'description',
         'description_fr',
         'description_en',
+        'team_image_url',
     ];
 
     /**
@@ -21,6 +22,7 @@ class QuiSommesNousSetting extends Model
             'description' => '',
             'description_fr' => '',
             'description_en' => '',
+            'team_image_url' => null,
         ]);
     }
 }

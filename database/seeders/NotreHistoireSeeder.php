@@ -12,43 +12,61 @@ class NotreHistoireSeeder extends Seeder
      */
     public function run(): void
     {
-        // Sample history data
+        // History data from ourstory.jsx component - actual company timeline
         $historyData = [
             [
                 'year' => 2018,
-                'description_fr' => 'Création de Soft Cactus à Casablanca. Début de notre aventure dans le digital avec une équipe de 3 personnes passionnées.',
-                'description_en' => 'Creation of Soft Cactus in Casablanca. Beginning of our digital adventure with a team of 3 passionate people.',
+                'description_fr' => 'Naissance de Soft Cactus et début de l\'aventure entrepreneuriale de sa fondatrice HANAE DEKHISSI.',
+                'description_en' => 'Birth of Soft Cactus and the beginning of the entrepreneurial adventure of its founder HANAE DEKHISSI.',
                 'sort_order' => 1,
             ],
             [
                 'year' => 2019,
-                'description_fr' => 'Première expansion avec l\'acquisition de 10 nouveaux clients et le développement de nos services web.',
-                'description_en' => 'First expansion with the acquisition of 10 new clients and the development of our web services.',
+                'description_fr' => 'Soft Cactus ouvre ses portes, à Casablanca, au Abdelmoumen, Maroc.',
+                'description_en' => 'Soft Cactus opens its doors in Casablanca, at Abdelmoumen, Morocco.',
                 'sort_order' => 2,
             ],
             [
                 'year' => 2020,
-                'description_fr' => 'Adaptation rapide aux défis de la pandémie, développement de solutions digitales innovantes pour nos clients.',
-                'description_en' => 'Quick adaptation to pandemic challenges, development of innovative digital solutions for our clients.',
+                'description_fr' => 'Ce qui nuit à l\'un, nuit a l\'autre. La crise pandémique était une nouvelle chance pour que nous puissions nous démarquer dans le domaine digital.',
+                'description_en' => 'What harms one, harms the other. The pandemic crisis was a new opportunity for us to stand out in the digital field.',
                 'sort_order' => 3,
             ],
             [
                 'year' => 2021,
-                'description_fr' => 'Ouverture de notre deuxième agence à Oujda, expansion de notre équipe à 15 collaborateurs.',
-                'description_en' => 'Opening of our second agency in Oujda, expansion of our team to 15 collaborators.',
+                'description_fr' => 'Rebelote, mais avec un nouvel esprit et une deuxième agence à Oujda.',
+                'description_en' => 'Here we go again, but with a new spirit and a second agency in Oujda.',
                 'sort_order' => 4,
             ],
             [
                 'year' => 2022,
-                'description_fr' => 'Lancement de nos services de production audiovisuelle et renforcement de notre expertise en branding.',
-                'description_en' => 'Launch of our audiovisual production services and strengthening of our branding expertise.',
+                'description_fr' => 'Renforcement de ce projet ambitieux à l\'Oriental, à travers le programme Forsa "Opportunité".',
+                'description_en' => 'Strengthening this ambitious project in the East, through the Forsa "Opportunity" program.',
                 'sort_order' => 5,
             ],
             [
                 'year' => 2023,
-                'description_fr' => 'Certification ISO et reconnaissance comme agence leader dans la région. Plus de 100 projets réalisés.',
-                'description_en' => 'ISO certification and recognition as a leading agency in the region. More than 100 projects completed.',
+                'description_fr' => 'Finalement tous réunis à l\'agence, tout en ayant des clients partout dans le Maroc.',
+                'description_en' => 'Finally all together at the agency, while having clients throughout Morocco.',
                 'sort_order' => 6,
+            ],
+            [
+                'year' => 2024,
+                'description_fr' => 'Une année d\'audace, où chaque défi est devenu une opportunité de croissance et chaque idée a trouvé son terrain d\'expression.',
+                'description_en' => 'A year of boldness, where every challenge became an opportunity for growth and every idea found its ground for expression.',
+                'sort_order' => 7,
+            ],
+            [
+                'year' => 2025,
+                'description_fr' => 'Une année marquée par la fidélité de nos clients, la force de notre équipe et une créativité qui n\'a jamais cessé d\'évoluer.',
+                'description_en' => 'A year marked by the loyalty of our clients, the strength of our team and creativity that never stopped evolving.',
+                'sort_order' => 8,
+            ],
+            [
+                'year' => 2026,
+                'description_fr' => 'L\'année de l\'innovation et de l\'expansion, où Soft Cactus continue de repousser les limites du possible dans le domaine digital.',
+                'description_en' => 'The year of innovation and expansion, where Soft Cactus continues to push the boundaries of what\'s possible in the digital field.',
+                'sort_order' => 9,
             ],
         ];
 

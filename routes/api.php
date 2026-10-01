@@ -80,6 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/why-us/cards/{id}', [\App\Http\Controllers\Api\WhyUsController::class, 'destroyCard']);
 
     // Qui Sommes-Nous — settings
+    Route::patch('/qui-sommes-nous/settings',    [\App\Http\Controllers\Api\QuiSommesNousController::class, 'updateSettings']);
     Route::patch('/qui-sommes-nous/description', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'updateDescription']);
 
     // Qui Sommes-Nous — services

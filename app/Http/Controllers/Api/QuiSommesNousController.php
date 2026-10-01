@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\QuiSommesNousService;
 use App\Models\QuiSommesNousSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,6 +31,7 @@ class QuiSommesNousController extends Controller
                 'description'    => $settings->description,
                 'description_fr' => $settings->description_fr,
                 'description_en' => $settings->description_en,
+                'team_image_url' => $this->fixStorageUrl($settings->team_image_url),
                 'services'       => $services->map(fn($service) => $this->formatService($service)),
             ],
         ]);
@@ -55,7 +57,8 @@ class QuiSommesNousController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'description' => $description,
+                'description'    => $description,
+                'team_image_url' => $this->fixStorageUrl($settings->team_image_url),
                 'services' => $services->map(function($service) use ($locale) {
                     return [
                         'id' => $service->id,
@@ -72,15 +75,16 @@ class QuiSommesNousController extends Controller
     // -------------------------------------------------------------------------
 
     /**
-     * PATCH /api/qui-sommes-nous/description
-     * Updates the main description
+     * PATCH /api/qui-sommes-nous/settings
+     * Updates settings: descriptions, team image (base64 or URL), etc.
      */
-    public function updateDescription(Request $request)
+    public function updateSettings(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'description'    => 'sometimes|nullable|string',
             'description_fr' => 'sometimes|nullable|string',
             'description_en' => 'sometimes|nullable|string',
+            'team_image_url' => 'sometimes|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -91,14 +95,47 @@ class QuiSommesNousController extends Controller
         }
 
         $settings = QuiSommesNousSetting::instance();
-        $settings->update($request->only([
+        $updateData = $request->only([
             'description', 'description_fr', 'description_en'
-        ]));
+        ]);
+
+        if ($request->has('team_image_url')) {
+            $newImage = $request->input('team_image_url');
+            if (is_string($newImage) && preg_match('/^data:(\w+\/[\w+-]+);base64,/', $newImage, $matches)) {
+                if ($settings->team_image_url) {
+                    $this->deleteStoredImage($settings->team_image_url);
+                }
+                $updateData['team_image_url'] = $this->saveBase64Image($newImage, $matches[1]);
+            } elseif ($newImage === null || $newImage === '') {
+                if ($settings->team_image_url) {
+                    $this->deleteStoredImage($settings->team_image_url);
+                }
+                $updateData['team_image_url'] = null;
+            } else {
+                $updateData['team_image_url'] = $newImage;
+            }
+        }
+
+        $settings->update($updateData);
 
         return response()->json([
             'success' => true,
-            'data'    => $settings,
+            'data'    => [
+                'description'    => $settings->description,
+                'description_fr' => $settings->description_fr,
+                'description_en' => $settings->description_en,
+                'team_image_url' => $this->fixStorageUrl($settings->team_image_url),
+            ],
         ]);
+    }
+
+    /**
+     * PATCH /api/qui-sommes-nous/description
+     * Backwards-compatible alias of updateSettings (for old backoffice versions).
+     */
+    public function updateDescription(Request $request)
+    {
+        return $this->updateSettings($request);
     }
 
     // -------------------------------------------------------------------------
@@ -276,5 +313,50 @@ class QuiSommesNousController extends Controller
         // Normalize storage URLs to work with APP_URL
         $appUrl = rtrim(config('app.url'), '/');
         return preg_replace('#^https?://[^/]*/storage#', $appUrl . '/storage', $url);
+    }
+
+    /**
+     * Save a base64 data-URL image to storage (same pattern as ProjectController).
+     */
+    private function saveBase64Image(string $base64String, string $mimeType): string
+    {
+        $base64String = preg_replace('/^data:\w+\/[\w+-]+;base64,/', '', $base64String);
+        $fileData = base64_decode($base64String);
+
+        $extension = 'bin';
+        $mimeTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/gif'  => 'gif',
+            'image/webp' => 'webp',
+            'image/svg+xml' => 'svg',
+        ];
+        if (isset($mimeTypes[$mimeType])) {
+            $extension = $mimeTypes[$mimeType];
+        } else {
+            $parts = explode('/', $mimeType);
+            if (count($parts) === 2) $extension = $parts[1];
+        }
+
+        $filename = Str::random(40) . '.' . $extension;
+        $path = 'qui-sommes-nous/' . $filename;
+        Storage::disk('public')->put($path, $fileData);
+
+        return Storage::disk('public')->url($path);
+    }
+
+    /**
+     * Delete a previously stored image if it lives in the public disk storage path.
+     */
+    private function deleteStoredImage(string $url): void
+    {
+        $relative = preg_replace('#^https?://[^/]+/storage/?#', '', $url);
+        if ($relative && $relative !== $url) {
+            try {
+                Storage::disk('public')->delete($relative);
+            } catch (\Throwable $e) {
+                // ignore
+            }
+        }
     }
 }
