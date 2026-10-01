@@ -61,7 +61,6 @@ class QuiSommesNousController extends Controller
                         'id' => $service->id,
                         'title' => $service->getLocalizedTitle($locale),
                         'text' => $service->getLocalizedText($locale),
-                        'icon_url' => $service->icon_url ? $this->fixStorageUrl($service->icon_url) : null,
                     ];
                 }),
             ],
@@ -118,7 +117,6 @@ class QuiSommesNousController extends Controller
             'text'      => 'nullable|string',
             'text_fr'   => 'nullable|string',
             'text_en'   => 'nullable|string',
-            'icon'      => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -130,13 +128,6 @@ class QuiSommesNousController extends Controller
 
         $maxOrder = QuiSommesNousService::max('sort_order') ?? 0;
 
-        $iconUrl = null;
-        if ($request->hasFile('icon')) {
-            $iconUrl = Storage::disk('public')->url(
-                $request->file('icon')->store('qui-sommes-nous/icons', 'public')
-            );
-        }
-
         $service = QuiSommesNousService::create([
             'title'      => $request->title ?? ($request->title_fr ?? ''),
             'title_fr'   => $request->title_fr,
@@ -144,7 +135,6 @@ class QuiSommesNousController extends Controller
             'text'       => $request->text ?? ($request->text_fr ?? ''),
             'text_fr'    => $request->text_fr,
             'text_en'    => $request->text_en,
-            'icon_url'   => $iconUrl,
             'enabled'    => $request->boolean('enabled', true),
             'sort_order' => $maxOrder + 1,
         ]);
@@ -173,7 +163,6 @@ class QuiSommesNousController extends Controller
             'text'       => 'sometimes|nullable|string',
             'text_fr'    => 'sometimes|nullable|string',
             'text_en'    => 'sometimes|nullable|string',
-            'icon'       => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
             'enabled'    => 'sometimes|boolean',
             'sort_order' => 'sometimes|integer|min:0',
         ]);
@@ -190,12 +179,6 @@ class QuiSommesNousController extends Controller
             'text', 'text_fr', 'text_en',
             'enabled', 'sort_order'
         ]);
-
-        if ($request->hasFile('icon')) {
-            $updateData['icon_url'] = Storage::disk('public')->url(
-                $request->file('icon')->store('qui-sommes-nous/icons', 'public')
-            );
-        }
 
         $service->update($updateData);
 
@@ -228,12 +211,6 @@ class QuiSommesNousController extends Controller
 
         if (!$service) {
             return response()->json(['success' => false, 'message' => 'Service not found'], 404);
-        }
-
-        // Delete associated icon file if exists
-        if ($service->icon_url) {
-            $path = str_replace(Storage::disk('public')->url(''), '', $service->icon_url);
-            Storage::disk('public')->delete($path);
         }
 
         $service->delete();
@@ -286,7 +263,6 @@ class QuiSommesNousController extends Controller
             'text'       => $service->text,
             'text_fr'    => $service->text_fr,
             'text_en'    => $service->text_en,
-            'icon_url'   => $service->icon_url ? $this->fixStorageUrl($service->icon_url) : null,
             'enabled'    => $service->enabled,
             'sort_order' => $service->sort_order,
             'created_at' => $service->created_at,
