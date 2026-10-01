@@ -30,6 +30,10 @@ Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, '
 Route::get('/qui-sommes-nous',        [\App\Http\Controllers\Api\QuiSommesNousController::class, 'index']);
 Route::get('/qui-sommes-nous/public', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'publicData']);
 
+// Notre Histoire — public read
+Route::get('/notre-histoire',        [\App\Http\Controllers\Api\NotreHistoireController::class, 'index']);
+Route::get('/notre-histoire/public', [\App\Http\Controllers\Api\NotreHistoireController::class, 'publicData']);
+
 // ─── Protected routes (auth:sanctum required) ─────────────────────────────────
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -84,4 +88,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/qui-sommes-nous/services/{id}/toggle', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'toggleService']);
     Route::delete('/qui-sommes-nous/services/{id}',       [\App\Http\Controllers\Api\QuiSommesNousController::class, 'destroyService']);
     Route::patch('/qui-sommes-nous/services/reorder',     [\App\Http\Controllers\Api\QuiSommesNousController::class, 'reorderServices']);
+
+    // Notre Histoire — management
+    Route::post('/notre-histoire',              [\App\Http\Controllers\Api\NotreHistoireController::class, 'store']);
+    Route::put('/notre-histoire/{id}',          [\App\Http\Controllers\Api\NotreHistoireController::class, 'update']);
+    Route::patch('/notre-histoire/{id}/toggle', [\App\Http\Controllers\Api\NotreHistoireController::class, 'toggle']);
+    Route::delete('/notre-histoire/{id}',       [\App\Http\Controllers\Api\NotreHistoireController::class, 'destroy']);
+    Route::patch('/notre-histoire/reorder',     [\App\Http\Controllers\Api\NotreHistoireController::class, 'reorder']);
 });
