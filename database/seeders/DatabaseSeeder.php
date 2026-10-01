@@ -21,5 +21,10 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'permissions' => ['dashboard.read', 'dashboard.write', 'users.read', 'users.create', 'users.update', 'users.delete', 'projects.read', 'projects.create', 'projects.update', 'projects.delete', 'why-us.read', 'why-us.update'],
         ]);
+
+        // Call other seeders
+        $this->call([
+            QuiSommesNousSeeder::class,
+        ]);
     }
 }

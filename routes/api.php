@@ -26,6 +26,10 @@ Route::get('/categories/{id}', [\App\Http\Controllers\Api\CategoryController::cl
 Route::get('/why-us',       [\App\Http\Controllers\Api\WhyUsController::class, 'index']);
 Route::get('/why-us/icons', [\App\Http\Controllers\Api\WhyUsController::class, 'icons']);
 
+// Qui Sommes-Nous — public read
+Route::get('/qui-sommes-nous',        [\App\Http\Controllers\Api\QuiSommesNousController::class, 'index']);
+Route::get('/qui-sommes-nous/public', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'publicData']);
+
 // ─── Protected routes (auth:sanctum required) ─────────────────────────────────
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -70,4 +74,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/why-us/cards',        [\App\Http\Controllers\Api\WhyUsController::class, 'storeCard']);
     Route::put('/why-us/cards/{id}',    [\App\Http\Controllers\Api\WhyUsController::class, 'updateCard']);
     Route::delete('/why-us/cards/{id}', [\App\Http\Controllers\Api\WhyUsController::class, 'destroyCard']);
+
+    // Qui Sommes-Nous — settings
+    Route::patch('/qui-sommes-nous/description', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'updateDescription']);
+
+    // Qui Sommes-Nous — services
+    Route::post('/qui-sommes-nous/services',              [\App\Http\Controllers\Api\QuiSommesNousController::class, 'storeService']);
+    Route::put('/qui-sommes-nous/services/{id}',          [\App\Http\Controllers\Api\QuiSommesNousController::class, 'updateService']);
+    Route::patch('/qui-sommes-nous/services/{id}/toggle', [\App\Http\Controllers\Api\QuiSommesNousController::class, 'toggleService']);
+    Route::delete('/qui-sommes-nous/services/{id}',       [\App\Http\Controllers\Api\QuiSommesNousController::class, 'destroyService']);
+    Route::patch('/qui-sommes-nous/services/reorder',     [\App\Http\Controllers\Api\QuiSommesNousController::class, 'reorderServices']);
 });
