@@ -34,6 +34,10 @@ Route::get('/qui-sommes-nous/public', [\App\Http\Controllers\Api\QuiSommesNousCo
 Route::get('/notre-histoire',        [\App\Http\Controllers\Api\NotreHistoireController::class, 'index']);
 Route::get('/notre-histoire/public', [\App\Http\Controllers\Api\NotreHistoireController::class, 'publicData']);
 
+// Services Section — public read
+Route::get('/services-section',        [\App\Http\Controllers\Api\ServicesSectionController::class, 'index']);
+Route::get('/services-section/public', [\App\Http\Controllers\Api\ServicesSectionController::class, 'publicData']);
+
 // ─── Protected routes (auth:sanctum required) ─────────────────────────────────
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -96,4 +100,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/notre-histoire/{id}/toggle', [\App\Http\Controllers\Api\NotreHistoireController::class, 'toggle']);
     Route::delete('/notre-histoire/{id}',       [\App\Http\Controllers\Api\NotreHistoireController::class, 'destroy']);
     Route::patch('/notre-histoire/reorder',     [\App\Http\Controllers\Api\NotreHistoireController::class, 'reorder']);
+
+    // Services Section — settings (intro / approach title / button label)
+    Route::patch('/services-section/settings', [\App\Http\Controllers\Api\ServicesSectionController::class, 'updateSettings']);
+
+    // Services Section — approach steps
+    Route::post('/services-section/steps',              [\App\Http\Controllers\Api\ServicesSectionController::class, 'storeStep']);
+    Route::put('/services-section/steps/{id}',          [\App\Http\Controllers\Api\ServicesSectionController::class, 'updateStep']);
+    Route::patch('/services-section/steps/{id}/toggle', [\App\Http\Controllers\Api\ServicesSectionController::class, 'toggleStep']);
+    Route::delete('/services-section/steps/{id}',       [\App\Http\Controllers\Api\ServicesSectionController::class, 'destroyStep']);
+    Route::patch('/services-section/steps/reorder',     [\App\Http\Controllers\Api\ServicesSectionController::class, 'reorderSteps']);
+
+    // Services Section — service cards
+    Route::post('/services-section/cards',              [\App\Http\Controllers\Api\ServicesSectionController::class, 'storeCard']);
+    Route::put('/services-section/cards/{id}',          [\App\Http\Controllers\Api\ServicesSectionController::class, 'updateCard']);
+    Route::patch('/services-section/cards/{id}/toggle', [\App\Http\Controllers\Api\ServicesSectionController::class, 'toggleCard']);
+    Route::delete('/services-section/cards/{id}',       [\App\Http\Controllers\Api\ServicesSectionController::class, 'destroyCard']);
+    Route::patch('/services-section/cards/reorder',     [\App\Http\Controllers\Api\ServicesSectionController::class, 'reorderCards']);
 });
