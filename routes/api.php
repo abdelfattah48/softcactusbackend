@@ -155,4 +155,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/admin/candidatures/{id}',     [\App\Http\Controllers\Api\CandidatureController::class, 'show']);
     Route::patch('/admin/candidatures/{id}/status', [\App\Http\Controllers\Api\CandidatureController::class, 'updateStatus']);
     Route::delete('/admin/candidatures/{id}',  [\App\Http\Controllers\Api\CandidatureController::class, 'destroy']);
+
+    // Notifications — new (unread) website submissions feed the header bell
+    Route::get('/admin/notifications',            [\App\Http\Controllers\Api\CandidatureController::class, 'notifications']);
+    Route::post('/admin/notifications/read-all',  [\App\Http\Controllers\Api\CandidatureController::class, 'markAllRead']);
+    Route::patch('/admin/candidatures/{id}/read', [\App\Http\Controllers\Api\CandidatureController::class, 'markRead']);
 });

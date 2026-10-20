@@ -12,7 +12,11 @@ class Candidature extends Model
 
     protected $fillable = [
         'poste', 'nom', 'prenom', 'email', 'tel', 'message',
-        'cv_path', 'cv_original_name', 'status',
+        'cv_path', 'cv_original_name', 'status', 'read_at',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
     ];
 
     /** CV download URL (relative /storage path), or null when no file. */

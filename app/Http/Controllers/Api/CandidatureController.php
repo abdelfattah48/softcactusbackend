@@ -189,6 +189,63 @@ class CandidatureController extends Controller
     }
 
     // -------------------------------------------------------------------------
+    // Notifications — new (unread) applications feed the header bell
+    // -------------------------------------------------------------------------
+
+    /**
+     * GET /api/admin/notifications
+     * Unread candidatures (most recent first) + total unread count.
+     */
+    public function notifications()
+    {
+        $unread = Candidature::whereNull('read_at')
+            ->latest()
+            ->limit(20)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'unread_count' => Candidature::whereNull('read_at')->count(),
+                'items' => $unread->map(fn ($c) => [
+                    'id'      => $c->id,
+                    'nom'     => trim($c->prenom . ' ' . $c->nom),
+                    'poste'   => $c->poste,
+                    'message' => $c->message,
+                    'read_at' => null,
+                    'created_at' => $c->created_at?->toISOString(),
+                ]),
+            ],
+        ]);
+    }
+
+    /**
+     * PATCH /api/admin/candidatures/{id}/read
+     * Mark a single candidature as read (dismiss its notification).
+     */
+    public function markRead($id)
+    {
+        $candidature = Candidature::find($id);
+        if (!$candidature) {
+            return response()->json(['success' => false, 'message' => 'Candidature not found'], 404);
+        }
+        if (!$candidature->read_at) {
+            $candidature->update(['read_at' => now()]);
+        }
+        return response()->json(['success' => true, 'data' => $this->format($candidature)]);
+    }
+
+    /**
+     * POST /api/admin/notifications/read-all
+     * Mark every unread candidature as read.
+     */
+    public function markAllRead()
+    {
+        $updated = Candidature::whereNull('read_at')->update(['read_at' => now()]);
+        return response()->json(['success' => true, 'data' => ['marked' => $updated]]);
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
@@ -205,6 +262,7 @@ class CandidatureController extends Controller
             'cv_url'           => $this->fixStorageUrl($c->cvUrl()),
             'cv_original_name' => $c->cv_original_name,
             'status'           => $c->status,
+            'read_at'          => $c->read_at?->toISOString(),
             'created_at'       => $c->created_at?->toISOString(),
         ];
     }
