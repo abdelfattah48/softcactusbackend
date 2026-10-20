@@ -38,6 +38,11 @@ Route::get('/notre-histoire/public', [\App\Http\Controllers\Api\NotreHistoireCon
 Route::get('/services-section',        [\App\Http\Controllers\Api\ServicesSectionController::class, 'index']);
 Route::get('/services-section/public', [\App\Http\Controllers\Api\ServicesSectionController::class, 'publicData']);
 
+// Recruitment page — public read + public application submission
+Route::get('/recruitment',        [\App\Http\Controllers\Api\RecruitmentController::class, 'index']);
+Route::get('/recruitment/public', [\App\Http\Controllers\Api\RecruitmentController::class, 'publicData']);
+Route::post('/candidatures',      [\App\Http\Controllers\Api\CandidatureController::class, 'store'])->middleware('throttle:10,1');
+
 // ─── Protected routes (auth:sanctum required) ─────────────────────────────────
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -117,4 +122,37 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/services-section/cards/{id}/toggle', [\App\Http\Controllers\Api\ServicesSectionController::class, 'toggleCard']);
     Route::delete('/services-section/cards/{id}',       [\App\Http\Controllers\Api\ServicesSectionController::class, 'destroyCard']);
     Route::patch('/services-section/cards/reorder',     [\App\Http\Controllers\Api\ServicesSectionController::class, 'reorderCards']);
+
+    // Recruitment — settings
+    Route::patch('/recruitment/settings', [\App\Http\Controllers\Api\RecruitmentController::class, 'updateSettings']);
+
+    // Recruitment — job offers
+    Route::post('/recruitment/jobs',              [\App\Http\Controllers\Api\RecruitmentController::class, 'storeJob']);
+    Route::put('/recruitment/jobs/{id}',          [\App\Http\Controllers\Api\RecruitmentController::class, 'updateJob']);
+    Route::patch('/recruitment/jobs/{id}/toggle', [\App\Http\Controllers\Api\RecruitmentController::class, 'toggleJob']);
+    Route::delete('/recruitment/jobs/{id}',       [\App\Http\Controllers\Api\RecruitmentController::class, 'destroyJob']);
+    Route::patch('/recruitment/jobs/reorder',     [\App\Http\Controllers\Api\RecruitmentController::class, 'reorderJobs']);
+
+    // Recruitment — talents (stagiaires)
+    Route::post('/recruitment/talents/upload-image',    [\App\Http\Controllers\Api\RecruitmentController::class, 'uploadTalentImage']);
+    Route::post('/recruitment/talents',                 [\App\Http\Controllers\Api\RecruitmentController::class, 'storeTalent']);
+    Route::put('/recruitment/talents/{id}',             [\App\Http\Controllers\Api\RecruitmentController::class, 'updateTalent']);
+    Route::patch('/recruitment/talents/{id}/toggle',    [\App\Http\Controllers\Api\RecruitmentController::class, 'toggleTalent']);
+    Route::delete('/recruitment/talents/{id}',          [\App\Http\Controllers\Api\RecruitmentController::class, 'destroyTalent']);
+    Route::patch('/recruitment/talents/reorder',        [\App\Http\Controllers\Api\RecruitmentController::class, 'reorderTalents']);
+
+    // Recruitment — why cards
+    Route::post('/recruitment/whys',              [\App\Http\Controllers\Api\RecruitmentController::class, 'storeWhy']);
+    Route::put('/recruitment/whys/{id}',          [\App\Http\Controllers\Api\RecruitmentController::class, 'updateWhy']);
+    Route::patch('/recruitment/whys/{id}/toggle', [\App\Http\Controllers\Api\RecruitmentController::class, 'toggleWhy']);
+    Route::delete('/recruitment/whys/{id}',       [\App\Http\Controllers\Api\RecruitmentController::class, 'destroyWhy']);
+    Route::patch('/recruitment/whys/reorder',     [\App\Http\Controllers\Api\RecruitmentController::class, 'reorderWhys']);
+
+    // Candidatures inbox (read / moderate applications received from the site)
+    Route::get('/admin/candidatures',          [\App\Http\Controllers\Api\CandidatureController::class, 'index']);
+    Route::get('/admin/candidatures/stats',    [\App\Http\Controllers\Api\CandidatureController::class, 'stats']);
+    Route::get('/admin/candidatures/postes',   [\App\Http\Controllers\Api\CandidatureController::class, 'postes']);
+    Route::get('/admin/candidatures/{id}',     [\App\Http\Controllers\Api\CandidatureController::class, 'show']);
+    Route::patch('/admin/candidatures/{id}/status', [\App\Http\Controllers\Api\CandidatureController::class, 'updateStatus']);
+    Route::delete('/admin/candidatures/{id}',  [\App\Http\Controllers\Api\CandidatureController::class, 'destroy']);
 });
