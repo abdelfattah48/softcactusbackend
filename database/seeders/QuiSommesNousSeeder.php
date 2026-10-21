@@ -39,19 +39,13 @@ class QuiSommesNousSeeder extends Seeder
                 'text_en' => 'We build brand strategies that reveal your identity, strengthen your positioning and enhance your company in a competitive market.',
                 'sort_order' => 2,
             ],
+          
             [
-                'title_fr' => 'MARKETING DIGITAL',
-                'title_en' => 'DIGITAL MARKETING',
+                'title_fr' => 'Production audiovisuel & création de contenu',
+                'title_en' => 'Audiovisual Production & Content Creation',
                 'text_fr' => 'Gestion complète des réseaux sociaux, incluant la planification, la production, le montage et la diffusion des contenus.',
-                'text_en' => 'Complete management of social networks, including planning, production, editing and content distribution.',
+                'text_en' => 'Complete social media management, including planning, production, editing, and content distribution.',
                 'sort_order' => 3,
-            ],
-            [
-                'title_fr' => 'PRODUCTION AUDIOVISUELLE',
-                'title_en' => 'AUDIOVISUAL PRODUCTION',
-                'text_fr' => 'Services complets de production audiovisuelle, du concept à la réalisation finale, incluant tournages, montage et post-production.',
-                'text_en' => 'Complete audiovisual production services, from concept to final realization, including filming, editing and post-production.',
-                'sort_order' => 4,
             ],
         ];
 

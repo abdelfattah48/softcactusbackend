@@ -43,6 +43,10 @@ Route::get('/recruitment',        [\App\Http\Controllers\Api\RecruitmentControll
 Route::get('/recruitment/public', [\App\Http\Controllers\Api\RecruitmentController::class, 'publicData']);
 Route::post('/candidatures',      [\App\Http\Controllers\Api\CandidatureController::class, 'store'])->middleware('throttle:10,1');
 
+// Contact page — public gallery read + public message submission
+Route::get('/contact/universe',   [\App\Http\Controllers\Api\ContactController::class, 'universePublic']);
+Route::post('/contact-messages',  [\App\Http\Controllers\Api\ContactController::class, 'storeMessage'])->middleware('throttle:10,1');
+
 // ─── Protected routes (auth:sanctum required) ─────────────────────────────────
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -160,4 +164,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/admin/notifications',            [\App\Http\Controllers\Api\CandidatureController::class, 'notifications']);
     Route::post('/admin/notifications/read-all',  [\App\Http\Controllers\Api\CandidatureController::class, 'markAllRead']);
     Route::patch('/admin/candidatures/{id}/read', [\App\Http\Controllers\Api\CandidatureController::class, 'markRead']);
+
+    // Contact — messages inbox (received from the public contact form)
+    Route::get('/admin/contact/messages',          [\App\Http\Controllers\Api\ContactController::class, 'messages']);
+    Route::get('/admin/contact/messages/stats',    [\App\Http\Controllers\Api\ContactController::class, 'messagesStats']);
+    Route::get('/admin/contact/messages/unread',   [\App\Http\Controllers\Api\ContactController::class, 'unreadNotifications']);
+    Route::post('/admin/contact/messages/read-all', [\App\Http\Controllers\Api\ContactController::class, 'markAllMessagesRead']);
+    Route::get('/admin/contact/messages/{id}',     [\App\Http\Controllers\Api\ContactController::class, 'showMessage']);
+    Route::patch('/admin/contact/messages/{id}/read', [\App\Http\Controllers\Api\ContactController::class, 'markMessageRead']);
+    Route::delete('/admin/contact/messages/{id}',  [\App\Http\Controllers\Api\ContactController::class, 'destroyMessage']);
+
+    // Contact — "L'univers de notre agence" gallery images
+    Route::get('/admin/contact/universe',          [\App\Http\Controllers\Api\ContactController::class, 'universeIndex']);
+    Route::post('/admin/contact/universe',         [\App\Http\Controllers\Api\ContactController::class, 'universeStore']);
+    Route::patch('/admin/contact/universe/reorder', [\App\Http\Controllers\Api\ContactController::class, 'universeReorder']);
+    Route::put('/admin/contact/universe/{id}',     [\App\Http\Controllers\Api\ContactController::class, 'universeUpdate']);
+    Route::patch('/admin/contact/universe/{id}/toggle', [\App\Http\Controllers\Api\ContactController::class, 'universeToggle']);
+    Route::delete('/admin/contact/universe/{id}',  [\App\Http\Controllers\Api\ContactController::class, 'universeDestroy']);
 });
