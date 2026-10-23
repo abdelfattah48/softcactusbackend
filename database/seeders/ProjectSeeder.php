@@ -8,6 +8,12 @@ use Illuminate\Database\Seeder;
 class ProjectSeeder extends Seeder
 {
     /**
+     * Canonical backend domain — all project media URLs are pinned to it,
+     * regardless of the environment's APP_URL.
+     */
+    protected const MEDIA_BASE = 'https://apibackendnew.softcactus.ma';
+
+    /**
      * Seeds the 8 real portfolio projects.
      * Cover cards come from public/projectcovercards/*.
      * Idempotent: matches projects by public_card.title_fr and updates them.
@@ -62,7 +68,7 @@ class ProjectSeeder extends Seeder
             'status' => 'published',
             'public_card' => [
                 'image' => [
-                    'url' => url('/projectcovercards/' . $coverFile),
+                    'url' => self::MEDIA_BASE . '/projectcovercards/' . $coverFile,
                     'alt' => $titleFr,
                 ],
                 'title_fr' => $titleFr,
@@ -102,7 +108,7 @@ class ProjectSeeder extends Seeder
     {
         return [
             'image' => [
-                'url' => url('/projectcovercards/' . $coverFile),
+                'url' => self::MEDIA_BASE . '/projectcovercards/' . $coverFile,
                 'alt' => $titleFr,
             ],
             'title_fr' => $titleFr,
