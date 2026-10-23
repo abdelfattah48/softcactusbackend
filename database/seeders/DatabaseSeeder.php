@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             QuiSommesNousSeeder::class,
             NotreHistoireSeeder::class,
             ServicesSectionSeeder::class,
+            CategorySeeder::class,   // categories first (sectors used by projects)
+            ProjectSeeder::class,    // then the 8 portfolio projects
         ]);
     }
 }
