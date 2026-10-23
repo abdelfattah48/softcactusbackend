@@ -20,9 +20,9 @@ class RecruitmentSeeder extends Seeder
                 'hero_title_en' => 'What if your next challenge started here?',
                 'hero_title'    => 'Et si votre prochain défi commençait ici ?',
 
-                'hero_paragraph_fr' => "Chez Soft Cactus, nous transformons les idées en expériences créatives. Nous réunissons des talents passionnés par la stratégie, le design, le digital et la création de contenu pour imaginer des projets qui font la différence.",
-                'hero_paragraph_en' => 'At Soft Cactus, we turn ideas into creative experiences. We bring together talents passionate about strategy, design, digital and content creation to imagine projects that make a difference.',
-                'hero_paragraph'    => "Chez Soft Cactus, nous transformons les idées en expériences créatives. Nous réunissons des talents passionnés par la stratégie, le design, le digital et la création de contenu pour imaginer des projets qui font la différence.",
+                'hero_paragraph_fr' => "Chez Soft Cactus, nous combinons stratégie, créativité et expertise pour donner vie à des projets qui renforcent les marques. Notre équipe d’experts en branding, digital, développement web et production audiovisuelle conçoit des solutions cohérentes, pensées pour vous démarquer et soutenir votre croissance.",
+                'hero_paragraph_en' => 'At Soft Cactus, we combine strategy, creativity and expertise to bring to life projects that strengthen brands. Our team of experts in branding, digital, web development and audiovisual production designs coherent solutions, crafted to set you apart and support your growth.',
+                'hero_paragraph'    => "Chez Soft Cactus, nous combinons stratégie, créativité et expertise pour donner vie à des projets qui renforcent les marques. Notre équipe d’experts en branding, digital, développement web et production audiovisuelle conçoit des solutions cohérentes, pensées pour vous démarquer et soutenir votre croissance.",
 
                 'hero_lead_fr' => "Envie de faire partie de l’aventure ?",
                 'hero_lead_en' => 'Want to be part of the adventure?',
