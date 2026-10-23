@@ -35,8 +35,8 @@ class ForgotPasswordController extends Controller
             ->where('email', $request->email)
             ->delete();
 
-        // Generate 6-digit OTP
-        $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        // Generate professional reset code: "S-" prefix + 5 digits (e.g. S-48291)
+        $otp = 'S-' . random_int(10000, 99999);
 
         // Store hashed OTP
         DB::table('password_reset_tokens')->insert([
@@ -56,7 +56,7 @@ class ForgotPasswordController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'A 6-digit verification code has been sent to your email.',
+            'message' => 'A verification code has been sent to your email.',
         ]);
     }
 
@@ -67,7 +67,7 @@ class ForgotPasswordController extends Controller
     {
         $request->validate([
             'email' => 'required|email|max:255',
-            'otp'   => 'required|string|size:6',
+            'otp'   => ['required', 'string', 'regex:/^S-\d{5}$/'],
         ]);
 
         $record = DB::table('password_reset_tokens')
